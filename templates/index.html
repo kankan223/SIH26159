@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecureMailScope — Cryptographic Security Posture Assessment</title>
+<link rel="stylesheet" href="static/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-mark">🛡</div>
+    <div>
+      <h1>Secure<span>MailScope</span></h1>
+      <div class="tagline">AI-Assisted Cryptographic Security Posture Assessment for Secure Email Communications</div>
+    </div>
+  </div>
+  <div class="scen-pick">
+    <span>Capture:</span>
+    <select id="topScenario"></select>
+  </div>
+  <div class="status-chip" id="topStatus" style="display:none">
+    <b id="topStatusScore">—</b><span id="topStatusBand">—</span>
+  </div>
+  <div class="demo-badge" title="Training/evaluation data mode — switch off in Settings for live capture processing">DATA MODE: EVALUATION</div>
+  <button class="theme-toggle" id="themeToggle" aria-pressed="false" title="Switch to light theme (also used for printing)">☀ Light</button>
+</header>
+
+<nav>
+  <button data-view="dashboard" class="active">◧ Overview</button>
+  <button data-view="analysis">⇪ Analysis</button>
+  <button data-view="sessions">≡ Sessions</button>
+  <button data-view="findings">⚠ Findings</button>
+  <button data-view="remediation">✓ Remediation</button>
+  <button data-view="report">⇩ Reporting</button>
+  <button data-view="settings">⚙ Settings</button>
+  <span class="kbd-hint" title="Keyboard: 1–7 to switch views, Esc to close the session drawer">keys 1–7</span>
+</nav>
+
+<main>
+
+  <!-- ============ DASHBOARD ============ -->
+  <section class="view active" id="view-dashboard">
+    <div id="dashEmpty" class="empty card">No analysis loaded yet.<br>
+      <span style="display:inline-block;margin-top:12px"><button class="btn primary" id="goAnalysis">Open Analysis →</button></span><br>
+      <span class="subtle" style="display:inline-block;margin-top:10px">Load a capture from the library (or upload a PCAP) and run the pipeline.</span></div>
+
+    <div id="dashContent" style="display:none">
+      <div class="grid g4">
+        <div class="card kpi">
+          <div class="label">Security Posture</div>
+          <div class="score-wrap">
+            <div class="gauge">
+              <canvas id="gaugeCanvas" width="264" height="264"></canvas>
+              <div class="center"><div><b id="gaugeScore">—</b><br><small>/ 100</small></div></div>
+            </div>
+            <div>
+              <div class="status" id="postureBand">—</div>
+              <div class="note" id="postureMeta" style="margin-top:6px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card kpi accent-critical"><div class="label">Critical Findings</div><div class="value" id="kpiCritical" style="color:var(--sev-critical)">0</div><div class="note">immediate action required</div></div>
+        <div class="card kpi accent-high"><div class="label">High Findings</div><div class="value" id="kpiHigh" style="color:var(--sev-high)">0</div><div class="note">remediate this cycle</div></div>
+        <div class="card kpi accent-medium"><div class="label">Medium / Low</div><div class="value" id="kpiMedLow" style="color:var(--amber)">0</div><div class="note" id="kpiMedLowNote">hardening items</div></div>
+      </div>
+
+      <div class="grid g4" style="margin-top:14px">
+        <div class="card kpi"><div class="label">Sessions Analyzed</div><div class="value" id="kpiSessions">0</div><div class="note" id="kpiSessionsNote"></div></div>
+        <div class="card kpi"><div class="label">Secure Sessions</div><div class="value" id="kpiSecure" style="color:var(--green)">0</div><div class="note">modern TLS, valid certs</div></div>
+        <div class="card kpi"><div class="label">Suspicious Sessions</div><div class="value" id="kpiSuspicious" style="color:var(--red)">0</div><div class="note" id="kpiSuspiciousNote">anomaly score ≥ 70</div></div>
+        <div class="card kpi"><div class="label">Capture Source</div><div class="value mono" id="kpiSource" style="font-size:16px;margin-top:8px">—</div><div class="note" id="kpiSourceNote"></div></div>
+      </div>
+
+      <div class="grid g3" style="margin-top:14px">
+        <div class="card"><h3>Protocol Distribution</h3><canvas class="chart" id="chartProto"></canvas></div>
+        <div class="card"><h3>TLS Version Distribution</h3><canvas class="chart" id="chartTls"></canvas></div>
+        <div class="card"><h3>Cipher Security</h3><canvas class="chart" id="chartCipher"></canvas></div>
+      </div>
+
+      <div class="grid g21" style="margin-top:14px">
+        <div class="card">
+          <h3>Recent Findings</h3>
+          <table class="tbl">
+            <thead><tr><th>Severity</th><th>Finding</th><th>Sessions</th><th>Status</th></tr></thead>
+            <tbody id="dashFindings"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Session Risk Profile <span class="chip outline" style="float:right;text-transform:none;letter-spacing:0">worst-first</span></h3>
+          <canvas class="chart" id="chartTrend" style="height:220px"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ANALYSIS ============ -->
+  <section class="view" id="view-analysis">
+    <div class="grid g12">
+      <div>
+        <div class="card">
+          <h3>PCAP Upload</h3>
+          <div class="drop" id="dropZone">
+            <div class="big">Drop a capture file here</div>
+            or <label style="color:var(--cyan);cursor:pointer;text-decoration:underline">browse<input type="file" id="pcapFile" accept=".pcap,.pcapng,.cap" hidden></label>
+            <div class="subtle" style="margin-top:8px">.pcap / .pcapng / .cap · max 50 MB · validated locally, never leaves this machine</div>
+            <div class="mono" id="fileInfo" style="margin-top:8px;color:var(--green)"></div>
+          </div>
+          <div class="btn-row" style="margin-top:12px">
+            <button class="btn primary" id="btnAnalyzeUpload" disabled>Analyze Uploaded Capture</button>
+          </div>
+          <div class="subtle" style="margin-top:8px">Uploaded captures are validated (magic bytes, size) and queued through the analysis pipeline. Deep packet extraction modules are enabled per deployment profile.</div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3>Reporting</h3>
+          <div class="btn-row">
+            <button class="btn" id="btnExportJson">⬇ Export JSON</button>
+            <button class="btn" id="btnExportHtml">⬇ Generate HTML Report</button>
+          </div>
+          <div class="subtle" style="margin-top:8px" id="reportHint">Run an analysis first — exports reflect the latest result.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Capture Library</h3>
+          <div class="scen-grid" id="scenGrid"></div>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn primary" id="btnAnalyzeScenario" disabled>Analyze Capture</button>
+            <span class="subtle" id="scenHint">Select a scenario to begin.</span>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Analysis Pipeline</h3>
+          <div class="term">
+            <div class="term-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="term-title">sms-analyzer — live pipeline</span><span class="term-live" id="termLive" style="display:none">● LIVE</span></div>
+            <div class="term-body" id="term"><div class="line info">SecureMailScope ready. Select a scenario or upload a PCAP to start.<span class="cursor">&nbsp;</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SESSION EXPLORER ============ -->
+  <section class="view" id="view-sessions">
+    <div id="sessEmpty" class="empty card">Load a capture to reconstruct sessions. Results appear here.</div>
+    <div id="sessContent" style="display:none">
+      <div class="filters" id="sessFilters">
+        <button data-f="ALL" class="active">All</button>
+        <button data-f="SECURE">Secure</button>
+        <button data-f="AT RISK">At Risk</button>
+        <button data-f="SMTP">SMTP</button>
+        <button data-f="IMAP">IMAP</button>
+        <button data-f="POP3">POP3</button>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="scrollbox">
+          <table class="tbl">
+            <thead><tr>
+              <th>Session</th><th>Protocol</th><th>Source</th><th>Destination</th><th>TLS</th>
+              <th>TLS Version</th><th>Cipher Suite</th><th>Certificate</th><th>Risk</th><th>Status</th>
+            </tr></thead>
+            <tbody id="sessRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINDINGS ============ -->
+  <section class="view" id="view-findings">
+    <div id="findEmpty" class="empty card">Run an analysis first — findings will appear here.</div>
+    <div id="findContent" style="display:none">
+      <div class="filters" id="findFilters">
+        <button data-f="ALL" class="active">All</button>
+        <button data-f="CRITICAL">Critical</button>
+        <button data-f="HIGH">High</button>
+        <button data-f="MEDIUM">Medium</button>
+        <button data-f="LOW">Low</button>
+        <button data-f="OPEN">Open</button>
+        <button data-f="RESOLVED">Resolved</button>
+      </div>
+      <div class="card" style="padding:0">
+        <table class="tbl">
+          <thead><tr><th>Severity</th><th>Finding</th><th>Session(s)</th><th>Evidence</th><th>Risk</th><th>Status</th></tr></thead>
+          <tbody id="findRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REMEDIATION ============ -->
+  <section class="view" id="view-remediation">
+    <div id="remEmpty" class="empty card">Run an analysis first — remediation plans will appear here.</div>
+    <div id="remContent" style="display:none">
+      <p class="subtle" style="margin-bottom:12px">Actionable remediation per finding. <b>Mark Resolved</b> updates the working state and recalculates the posture preview.</p>
+      <div id="remList"></div>
+      <div class="card" style="margin-top:14px">
+        <h3>Simulated Posture After Resolution</h3>
+        <div class="score-wrap">
+          <div class="gauge"><canvas id="gaugeWhatIf" width="264" height="264"></canvas>
+            <div class="center"><div><b id="gaugeWhatIfScore">—</b><br><small>/ 100</small></div></div></div>
+          <div><div class="status" id="whatIfBand">—</div>
+          <div class="note" style="margin-top:6px" id="whatIfNote">Resolve findings to preview the improved posture.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REPORTING ============ -->
+  <section class="view" id="view-report">
+    <div id="repEmpty" class="empty card">Run an analysis first — the forensic report can then be generated.</div>
+    <div id="repContent" style="display:none">
+      <div class="card">
+        <h3>Forensic Report</h3>
+        <div class="btn-row">
+          <button class="btn" id="btnExportJson2">⬇ Export JSON</button>
+          <button class="btn primary" id="btnExportHtml2">⬇ Generate HTML Report</button>
+        </div>
+        <div class="subtle" style="margin-top:8px">The HTML report is self-contained (opens in any browser, printable) and includes an executive summary, protocol/TLS/certificate analysis, findings, AI prioritization and recommendations. Files are also saved to <span class="mono">reports/</span> on the server.</div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>SOC / SIEM Feed <span class="chip outline" style="float:right;text-transform:none;letter-spacing:0">STIX 2.1 · CSV</span></h3>
+        <div class="btn-row">
+          <button class="btn" id="btnExportStix">⬇ Export STIX Bundle</button>
+          <button class="btn" id="btnExportFindingsCsv">⬇ Export Findings CSV</button>
+        </div>
+        <div class="subtle" style="margin-top:8px">Machine-readable feeds for OpenCTI, MISP, Splunk ES or ELK: network-traffic and x509-certificate observations per session, custom finding objects with severity, and a flat CSV findings feed. IOCs (SNI domains, certificate subjects, observed addresses) are extracted from the analyzed capture only — passive by design.</div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Capture Comparison <span class="chip outline" style="float:right;text-transform:none;letter-spacing:0">before / after</span></h3>
+        <div class="subtle" style="margin-bottom:8px">Diff any two analyses from this session — remediation evidence: what got resolved, what regressed, how the posture moved.</div>
+        <div class="btn-row">
+          <select id="cmpBefore" class="select" style="flex:1" aria-label="Before snapshot"></select>
+          <span class="subtle">→</span>
+          <select id="cmpAfter" class="select" style="flex:1" aria-label="After snapshot"></select>
+          <button class="btn" id="btnCompare">⇄ Compare</button>
+        </div>
+        <div id="cmpOut" style="margin-top:10px"><div class="subtle">Run at least two analyses, then compare them here.</div></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Report Preview</h3>
+        <iframe id="repFrame" style="width:100%;height:560px;border:1px solid var(--border);border-radius:8px;background:#0d1220" title="Report preview"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section class="view" id="view-settings">
+    <div class="grid g12">
+      <div>
+        <div class="card">
+          <h3>Data Mode</h3>
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">Capture source policy</div>
+              <div class="subtle">Evaluation mode analyzes the curated mail-security capture library. Live mode processes operator-supplied captures only.</div>
+            </div>
+            <label class="switch" title="Toggle data mode">
+              <input type="checkbox" id="setLiveMode">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="mode-note" id="modeNote"></div>
+          <div class="subtle" style="margin-top:10px">Passive analysis only — the engine never injects traffic, negotiates sessions, or probes remote hosts.</div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3>Audit Trail <span class="chip outline" style="float:right;text-transform:none;letter-spacing:0">append-only</span></h3>
+          <div class="subtle" style="margin-bottom:8px">Operator actions affecting data policy and retention. Newest first.</div>
+          <div class="audit-filters">
+            <input type="search" id="auditSearch" placeholder="Search events…" aria-label="Search audit events">
+            <div class="filters" id="auditFilters">
+              <button data-f="ALL" class="active">All</button>
+              <button data-f="POLICY">Policy</button>
+              <button data-f="ANALYSIS">Analysis</button>
+              <button data-f="REPORTS">Reports</button>
+              <button data-f="REJECTED">Rejections</button>
+            </div>
+          </div>
+          <div class="audit-box" id="auditBox"><div class="empty">No audit events recorded yet.</div></div>
+          <div class="btn-row" style="margin-top:10px">
+            <button class="btn small" id="btnAuditJson">⬇ Export JSON</button>
+            <button class="btn small" id="btnAuditCsv">⬇ Export CSV</button>
+            <span class="subtle" id="auditExportHint">Full trail, oldest first.</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3>Operator</h3>
+          <dl class="kv">
+            <dt>Deployment</dt><dd id="setDeployment">—</dd>
+            <dt>Engine version</dt><dd id="setVersion">—</dd>
+            <dt>Risk model</dt><dd>100 − (30C + 20H + 10M + 5L)</dd>
+            <dt>Standards baseline</dt><dd>RFC 8314 · NIST SP 800-52r2</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Report Retention</h3>
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">Auto-generated reports</div>
+              <div class="subtle">Applies to files the engine writes to <span class="mono">reports/</span>. Changing the window sweeps expired artifacts immediately.</div>
+            </div>
+            <select id="setRetention" style="min-width:150px">
+              <option value="session">Session only</option>
+              <option value="7d">Keep 7 days</option>
+              <option value="30d">Keep 30 days</option>
+              <option value="90d">Keep 90 days</option>
+              <option value="forever">Keep forever</option>
+            </select>
+          </div>
+          <div class="btn-row" style="margin-top:12px">
+            <button class="btn danger small" id="btnClearReports">Clear report store now</button>
+            <span class="subtle" id="retentionHint"></span>
+          </div>
+          <table class="tbl" style="margin-top:10px">
+            <thead><tr><th>Artifact</th><th>Type</th><th>Size</th><th>Generated</th></tr></thead>
+            <tbody id="repStoreRows"><tr><td colspan="4" class="empty">No report artifacts on disk.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">SecureMailScope · Passive cryptographic posture assessment for email infrastructure · RFC 8314 / NIST SP 800-52 aligned · SIH26159 (NTRO)</div>
+</main>
+
+<!-- ============ CONFIRM MODAL (destructive actions) ============ -->
+<div class="modal-back" id="modalBack">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalMsg">
+    <h3 id="modalTitle">Confirm</h3>
+    <p id="modalMsg"></p>
+    <div class="btn-row" style="justify-content:flex-end;margin-top:16px">
+      <button class="btn" id="modalCancel">Cancel</button>
+      <button class="btn danger-solid" id="modalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SESSION DRAWER ============ -->
+<div class="drawer-back" id="drawerBack">
+  <aside class="drawer" id="drawer"></aside>
+</div>
+
+<script src="static/app.js"></script>
+</body>
+</html>

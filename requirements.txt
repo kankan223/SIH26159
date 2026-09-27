@@ -1,0 +1,4 @@
+Flask==3.0.3
+scikit-learn==1.9.1
+cryptography==50.0.1
+numpy==2.5.3

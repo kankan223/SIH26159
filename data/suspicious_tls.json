@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "name": "Suspicious TLS Session",
+    "file_label": "suspicious_tls.pcap",
+    "size_hint": "2.1 MB",
+    "capture_window": "2026-09-23 03:15 – 03:55 IST",
+    "description": "Off-hours connections to an unfamiliar host present a mismatched certificate and show downgrade-then-encrypt patterns."
+  },
+  "protocols": [
+    {"name": "SMTP", "sessions": 8, "confidence": 96},
+    {"name": "IMAP", "sessions": 4, "confidence": 93},
+    {"name": "POP3", "sessions": 2, "confidence": 89}
+],
+  "certificates": [
+    {"id": "CERT-1", "subject": "mail.example.org", "issuer": "Example CA G2", "valid_from": "2026-01-12", "valid_until": "2027-01-12", "key_alg": "RSA", "key_len": 2048, "sig_alg": "SHA256withRSA", "status": "VALID", "san": "mail.example.org, smtp.example.org"},
+    {"id": "CERT-2", "subject": "imap.example.org", "issuer": "Example CA G2", "valid_from": "2026-02-03", "valid_until": "2027-02-03", "key_alg": "RSA", "key_len": 2048, "sig_alg": "SHA256withRSA", "status": "VALID", "san": "imap.example.org"},
+    {"id": "CERT-9", "subject": "mx-unknown-host.net", "issuer": "Self-Signed", "valid_from": "2026-08-30", "valid_until": "2027-08-30", "key_alg": "RSA", "key_len": 1024, "sig_alg": "SHA1withRSA", "status": "UNTRUSTED", "san": "mx-unknown-host.net", "note": "Self-signed; subject does not match any expected mail host"}
+  ],
+  "sessions": [
+    {"id": "SES-001", "protocol": "SMTP", "src": "10.10.2.14", "dst": "mail.example.local", "src_port": 52110, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 35, "bytes": 132800, "duration_s": 23, "anomaly": {"score": 10, "detected": [], "confidence": 95}},
+    {"id": "SES-002", "protocol": "SMTP", "src": "10.10.2.21", "dst": "mail.example.local", "src_port": 53102, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 33, "bytes": 124600, "duration_s": 22, "anomaly": {"score": 9, "detected": [], "confidence": 96}},
+    {"id": "SES-003", "protocol": "SMTP", "src": "10.10.2.25", "dst": "mx-unknown-host.net", "src_port": 54233, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "AES256-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-9", "packets": 29, "bytes": 98300, "duration_s": 18, "anomaly": {"score": 89, "detected": ["Certificate mismatch — host presents unrelated identity", "Self-signed / untrusted issuer", "TLS version downgrade (TLS 1.0)"], "confidence": 96}},
+    {"id": "SES-004", "protocol": "SMTP", "src": "10.10.2.25", "dst": "mx-unknown-host.net", "src_port": 54261, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "AES256-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-9", "packets": 27, "bytes": 92100, "duration_s": 16, "anomaly": {"score": 88, "detected": ["Certificate mismatch — host presents unrelated identity", "Self-signed / untrusted issuer", "TLS version downgrade (TLS 1.0)"], "confidence": 96}},
+    {"id": "SES-005", "protocol": "SMTP", "src": "10.10.2.31", "dst": "mail.partner.net", "src_port": 55190, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 31, "bytes": 104200, "duration_s": 19, "anomaly": {"score": 11, "detected": [], "confidence": 95}},
+    {"id": "SES-006", "protocol": "SMTP", "src": "10.10.2.40", "dst": "mail.example.local", "src_port": 56311, "dst_port": 25, "tls": "PLAINTEXT", "tls_version": null, "cipher": "—", "key_exchange": "—", "forward_secrecy": false, "cert": null, "packets": 21, "bytes": 50300, "duration_s": 10, "anomaly": {"score": 81, "detected": ["STARTTLS stripped — session fell back to plaintext"], "confidence": 88}},
+    {"id": "SES-007", "protocol": "SMTP", "src": "10.10.2.40", "dst": "mx-unknown-host.net", "src_port": 56355, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "AES256-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-9", "packets": 26, "bytes": 84700, "duration_s": 14, "anomaly": {"score": 87, "detected": ["Certificate mismatch — host presents unrelated identity", "Self-signed / untrusted issuer"], "confidence": 95}},
+    {"id": "SES-008", "protocol": "SMTP", "src": "10.10.2.47", "dst": "mail.example.local", "src_port": 57410, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 32, "bytes": 108500, "duration_s": 18, "anomaly": {"score": 10, "detected": [], "confidence": 96}},
+    {"id": "SES-009", "protocol": "IMAP", "src": "10.10.4.11", "dst": "imap.example.org", "src_port": 61200, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 58, "bytes": 209400, "duration_s": 378, "anomaly": {"score": 8, "detected": [], "confidence": 96}},
+    {"id": "SES-010", "protocol": "IMAP", "src": "10.10.4.15", "dst": "imap.example.org", "src_port": 61244, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 54, "bytes": 182100, "duration_s": 344, "anomaly": {"score": 7, "detected": [], "confidence": 97}},
+    {"id": "SES-011", "protocol": "IMAP", "src": "10.10.4.18", "dst": "imap.example.org", "src_port": 61301, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.0", "cipher": "AES128-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-2", "packets": 47, "bytes": 149800, "duration_s": 316, "anomaly": {"score": 62, "detected": ["TLS version downgrade (TLS 1.0)", "No forward secrecy (static RSA key exchange)"], "confidence": 93}},
+    {"id": "SES-012", "protocol": "IMAP", "src": "10.10.4.22", "dst": "imap.example.org", "src_port": 61355, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 50, "bytes": 163200, "duration_s": 327, "anomaly": {"score": 6, "detected": [], "confidence": 97}},
+    {"id": "SES-013", "protocol": "POP3", "src": "10.10.6.9", "dst": "pop.example.org", "src_port": 62211, "dst_port": 995, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 24, "bytes": 67400, "duration_s": 55, "anomaly": {"score": 5, "detected": [], "confidence": 97}},
+    {"id": "SES-014", "protocol": "POP3", "src": "10.10.6.12", "dst": "pop.example.org", "src_port": 62290, "dst_port": 995, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 26, "bytes": 72900, "duration_s": 60, "anomaly": {"score": 5, "detected": [], "confidence": 97}}
+  ],
+  "starttls_events": [
+    {"session": "SES-001", "advertised": true, "negotiated": true},
+    {"session": "SES-002", "advertised": true, "negotiated": true},
+    {"session": "SES-003", "advertised": true, "negotiated": true},
+    {"session": "SES-004", "advertised": true, "negotiated": true},
+    {"session": "SES-005", "advertised": true, "negotiated": true},
+    {"session": "SES-006", "advertised": true, "negotiated": false, "note": "STARTTLS stripped mid-capture — plaintext continued"},
+    {"session": "SES-007", "advertised": true, "negotiated": true},
+    {"session": "SES-008", "advertised": true, "negotiated": true}
+  ],
+  "notes": "SES-003/004/007 connect to mx-unknown-host.net with a self-signed 1024-bit SHA1 cert; SES-006 was stripped; SES-011 shows a downgrade on IMAP."
+}

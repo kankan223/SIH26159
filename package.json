@@ -1,0 +1,14 @@
+{
+  "name": "sih26159",
+  "version": "1.0.0",
+  "description": "**AI-Assisted Cryptographic Security Posture Assessment for Secure Email Communications** Smart India Hackathon 2026 — Problem Statement **SIH26159** · Org: **NTRO** · Theme: Blockchain & Cybersecurity · Category: Software",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}

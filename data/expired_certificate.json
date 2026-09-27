@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "name": "Expired Certificate",
+    "file_label": "expired_certificate.pcap",
+    "size_hint": "1.9 MB",
+    "capture_window": "2026-09-22 16:10 – 16:40 IST",
+    "description": "The mail server certificate expired 142 days ago and was never renewed; clients silently accept it."
+  },
+  "protocols": [
+    {"name": "SMTP", "sessions": 9, "confidence": 97},
+    {"name": "IMAP", "sessions": 5, "confidence": 95},
+    {"name": "POP3", "sessions": 2, "confidence": 92}
+  ],
+  "certificates": [
+    {"id": "CERT-1", "subject": "mail.example.org", "issuer": "Example CA G2", "valid_from": "2025-01-12", "valid_until": "2026-05-06", "key_alg": "RSA", "key_len": 2048, "sig_alg": "SHA256withRSA", "status": "EXPIRED", "days_expired": 142, "san": "mail.example.org, smtp.example.org"},
+    {"id": "CERT-2", "subject": "imap.example.org", "issuer": "Example CA G2", "valid_from": "2025-02-03", "valid_until": "2026-06-14", "key_alg": "RSA", "key_len": 2048, "sig_alg": "SHA256withRSA", "status": "EXPIRED", "days_expired": 103, "san": "imap.example.org"}
+  ],
+  "sessions": [
+    {"id": "SES-001", "protocol": "SMTP", "src": "10.10.2.14", "dst": "mail.example.local", "src_port": 52110, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 37, "bytes": 146300, "duration_s": 25, "anomaly": {"score": 38, "detected": ["Expired certificate served (142 days)"], "confidence": 93}},
+    {"id": "SES-002", "protocol": "SMTP", "src": "10.10.2.21", "dst": "mail.example.local", "src_port": 53102, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 34, "bytes": 128900, "duration_s": 22, "anomaly": {"score": 37, "detected": ["Expired certificate served (142 days)"], "confidence": 93}},
+    {"id": "SES-003", "protocol": "SMTP", "src": "10.10.2.25", "dst": "mail.example.local", "src_port": 54233, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 39, "bytes": 151200, "duration_s": 27, "anomaly": {"score": 36, "detected": ["Expired certificate served (142 days)"], "confidence": 92}},
+    {"id": "SES-004", "protocol": "SMTP", "src": "10.10.2.31", "dst": "mail.partner.net", "src_port": 55190, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 31, "bytes": 101400, "duration_s": 18, "anomaly": {"score": 38, "detected": ["Expired certificate served (142 days)"], "confidence": 93}},
+    {"id": "SES-005", "protocol": "SMTP", "src": "10.10.2.40", "dst": "mx.vendorsys.com", "src_port": 56311, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 29, "bytes": 94260, "duration_s": 16, "anomaly": {"score": 35, "detected": ["Expired certificate served (142 days)"], "confidence": 92}},
+    {"id": "SES-006", "protocol": "SMTP", "src": "10.10.2.47", "dst": "mail.example.local", "src_port": 57410, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 30, "bytes": 96840, "duration_s": 17, "anomaly": {"score": 36, "detected": ["Expired certificate served (142 days)"], "confidence": 93}},
+    {"id": "SES-007", "protocol": "SMTP", "src": "10.10.2.52", "dst": "mail.example.local", "src_port": 58122, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 32, "bytes": 104900, "duration_s": 19, "anomaly": {"score": 37, "detected": ["Expired certificate served (142 days)"], "confidence": 93}},
+    {"id": "SES-008", "protocol": "SMTP", "src": "10.10.2.58", "dst": "mail.partner.net", "src_port": 59144, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 28, "bytes": 88700, "duration_s": 15, "anomaly": {"score": 35, "detected": ["Expired certificate served (142 days)"], "confidence": 92}},
+    {"id": "SES-009", "protocol": "SMTP", "src": "10.10.2.62", "dst": "mail.example.local", "src_port": 59210, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 33, "bytes": 109300, "duration_s": 20, "anomaly": {"score": 36, "detected": ["Expired certificate served (142 days)"], "confidence": 93}},
+    {"id": "SES-010", "protocol": "IMAP", "src": "10.10.4.11", "dst": "imap.example.org", "src_port": 61200, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 62, "bytes": 226700, "duration_s": 405, "anomaly": {"score": 34, "detected": ["Expired certificate served (103 days)"], "confidence": 92}},
+    {"id": "SES-011", "protocol": "IMAP", "src": "10.10.4.15", "dst": "imap.example.org", "src_port": 61244, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 57, "bytes": 191200, "duration_s": 371, "anomaly": {"score": 33, "detected": ["Expired certificate served (103 days)"], "confidence": 92}},
+    {"id": "SES-012", "protocol": "IMAP", "src": "10.10.4.18", "dst": "imap.example.org", "src_port": 61301, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 51, "bytes": 167400, "duration_s": 334, "anomaly": {"score": 34, "detected": ["Expired certificate served (103 days)"], "confidence": 93}},
+    {"id": "SES-013", "protocol": "IMAP", "src": "10.10.4.22", "dst": "imap.example.org", "src_port": 61355, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 48, "bytes": 151800, "duration_s": 309, "anomaly": {"score": 32, "detected": ["Expired certificate served (103 days)"], "confidence": 92}},
+    {"id": "SES-014", "protocol": "IMAP", "src": "10.10.4.25", "dst": "imap.example.org", "src_port": 61402, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 44, "bytes": 137200, "duration_s": 271, "anomaly": {"score": 33, "detected": ["Expired certificate served (103 days)"], "confidence": 92}},
+    {"id": "SES-015", "protocol": "POP3", "src": "10.10.6.9", "dst": "pop.example.org", "src_port": 62211, "dst_port": 995, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 24, "bytes": 68900, "duration_s": 56, "anomaly": {"score": 30, "detected": ["Expired certificate served (142 days)"], "confidence": 91}},
+    {"id": "SES-016", "protocol": "POP3", "src": "10.10.6.12", "dst": "pop.example.org", "src_port": 62290, "dst_port": 995, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 26, "bytes": 74500, "duration_s": 62, "anomaly": {"score": 29, "detected": ["Expired certificate served (142 days)"], "confidence": 91}}
+  ],
+  "starttls_events": [
+    {"session": "SES-001", "advertised": true, "negotiated": true},
+    {"session": "SES-002", "advertised": true, "negotiated": true},
+    {"session": "SES-003", "advertised": true, "negotiated": true},
+    {"session": "SES-004", "advertised": true, "negotiated": true},
+    {"session": "SES-005", "advertised": true, "negotiated": true},
+    {"session": "SES-006", "advertised": true, "negotiated": true},
+    {"session": "SES-007", "advertised": true, "negotiated": true},
+    {"session": "SES-008", "advertised": true, "negotiated": true},
+    {"session": "SES-009", "advertised": true, "negotiated": true}
+  ],
+  "notes": "Protocols and ciphers are healthy; the single issue is expired certificates on all TLS endpoints."
+}

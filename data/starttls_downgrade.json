@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "name": "STARTTLS Downgrade",
+    "file_label": "starttls_downgrade.pcap",
+    "size_hint": "2.8 MB",
+    "capture_window": "2026-09-21 11:20 – 11:50 IST",
+    "description": "On-path attacker strips STARTTLS on several SMTP links; surviving TLS sessions negotiate TLS 1.0 with 3DES and an expired certificate."
+  },
+  "protocols": [
+    {"name": "SMTP", "sessions": 14, "confidence": 98},
+    {"name": "IMAP", "sessions": 3, "confidence": 94},
+    {"name": "POP3", "sessions": 1, "confidence": 91}
+  ],
+  "certificates": [
+    {"id": "CERT-1", "subject": "mail.example.org", "issuer": "Example CA G2", "valid_from": "2025-01-12", "valid_until": "2026-04-30", "key_alg": "RSA", "key_len": 2048, "sig_alg": "SHA256withRSA", "status": "EXPIRED", "days_expired": 142, "san": "mail.example.org, smtp.example.org"},
+    {"id": "CERT-2", "subject": "imap.example.org", "issuer": "Example CA G2", "valid_from": "2026-02-03", "valid_until": "2027-02-03", "key_alg": "RSA", "key_len": 2048, "sig_alg": "SHA256withRSA", "status": "VALID", "san": "imap.example.org"}
+  ],
+  "sessions": [
+    {"id": "SES-001", "protocol": "SMTP", "src": "10.10.2.14", "dst": "mail.example.local", "src_port": 52110, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 38, "bytes": 149200, "duration_s": 26, "anomaly": {"score": 14, "detected": [], "confidence": 92}},
+    {"id": "SES-002", "protocol": "SMTP", "src": "10.10.2.14", "dst": "mail.example.local", "src_port": 52144, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 35, "bytes": 132400, "duration_s": 24, "anomaly": {"score": 12, "detected": [], "confidence": 93}},
+    {"id": "SES-003", "protocol": "SMTP", "src": "10.10.2.21", "dst": "mail.example.local", "src_port": 53102, "dst_port": 25, "tls": "PLAINTEXT", "tls_version": null, "cipher": "—", "key_exchange": "—", "forward_secrecy": false, "cert": null, "packets": 22, "bytes": 54220, "duration_s": 11, "anomaly": {"score": 82, "detected": ["STARTTLS stripped — session fell back to plaintext"], "confidence": 89}},
+    {"id": "SES-004", "protocol": "SMTP", "src": "10.10.2.25", "dst": "mail.example.local", "src_port": 54233, "dst_port": 25, "tls": "PLAINTEXT", "tls_version": null, "cipher": "—", "key_exchange": "—", "forward_secrecy": false, "cert": null, "packets": 20, "bytes": 49800, "duration_s": 10, "anomaly": {"score": 84, "detected": ["STARTTLS stripped — session fell back to plaintext"], "confidence": 90}},
+    {"id": "SES-005", "protocol": "SMTP", "src": "10.10.2.31", "dst": "mail.partner.net", "src_port": 55190, "dst_port": 25, "tls": "PLAINTEXT", "tls_version": null, "cipher": "—", "key_exchange": "—", "forward_secrecy": false, "cert": null, "packets": 24, "bytes": 61120, "duration_s": 13, "anomaly": {"score": 87, "detected": ["STARTTLS stripped — session fell back to plaintext"], "confidence": 91}},
+    {"id": "SES-006", "protocol": "SMTP", "src": "10.10.2.31", "dst": "mail.partner.net", "src_port": 55222, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 30, "bytes": 94330, "duration_s": 18, "anomaly": {"score": 87, "detected": ["TLS version downgrade (TLS 1.0)", "Unexpected weak cipher selection (3DES)", "Certificate mismatch / expired certificate served"], "confidence": 91}},
+    {"id": "SES-007", "protocol": "SMTP", "src": "10.10.2.40", "dst": "mx.vendorsys.com", "src_port": 56311, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 29, "bytes": 90120, "duration_s": 17, "anomaly": {"score": 85, "detected": ["TLS version downgrade (TLS 1.0)", "Unexpected weak cipher selection (3DES)"], "confidence": 90}},
+    {"id": "SES-008", "protocol": "SMTP", "src": "10.10.2.40", "dst": "mx.vendorsys.com", "src_port": 56355, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 27, "bytes": 86740, "duration_s": 15, "anomaly": {"score": 86, "detected": ["TLS version downgrade (TLS 1.0)", "Unexpected weak cipher component (3DES)"], "confidence": 90}},
+    {"id": "SES-009", "protocol": "SMTP", "src": "10.10.2.47", "dst": "mail.example.local", "src_port": 57410, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 28, "bytes": 89300, "duration_s": 16, "anomaly": {"score": 84, "detected": ["TLS version downgrade (TLS 1.0)", "Unexpected weak cipher component (3DES)"], "confidence": 89}},
+    {"id": "SES-010", "protocol": "SMTP", "src": "10.10.2.47", "dst": "mail.example.local", "src_port": 57451, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 30, "bytes": 91220, "duration_s": 17, "anomaly": {"score": 84, "detected": ["TLS version downgrade (TLS 1.0)", "Unexpected weak cipher component (3DES)"], "confidence": 89}},
+    {"id": "SES-011", "protocol": "SMTP", "src": "10.10.2.52", "dst": "mail.example.local", "src_port": 58122, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 33, "bytes": 118450, "duration_s": 21, "anomaly": {"score": 18, "detected": [], "confidence": 94}},
+    {"id": "SES-012", "protocol": "SMTP", "src": "10.10.2.58", "dst": "mx.vendorsys.com", "src_port": 59144, "dst_port": 25, "tls": "PLAINTEXT", "tls_version": null, "cipher": "—", "key_exchange": "—", "forward_secrecy": false, "cert": null, "packets": 21, "bytes": 52310, "duration_s": 12, "anomaly": {"score": 83, "detected": ["STARTTLS stripped — session fell back to plaintext"], "confidence": 90}},
+    {"id": "SES-013", "protocol": "SMTP", "src": "10.10.2.62", "dst": "mail.partner.net", "src_port": 59210, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 26, "bytes": 81450, "duration_s": 14, "anomaly": {"score": 85, "detected": ["TLS version downgrade (TLS 1.0)", "Unexpected weak cipher component (3DES)"], "confidence": 90}},
+    {"id": "SES-014", "protocol": "SMTP", "src": "10.10.2.21", "dst": "mail.example.local", "src_port": 53180, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.0", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 31, "bytes": 96550, "duration_s": 19, "anomaly": {"score": 91, "detected": ["TLS downgrade behavior", "Certificate mismatch", "Unexpected weak cipher selection (3DES)"], "confidence": 94}},
+    {"id": "SES-015", "protocol": "IMAP", "src": "10.10.4.11", "dst": "imap.example.org", "src_port": 61200, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 58, "bytes": 208400, "duration_s": 372, "anomaly": {"score": 9, "detected": [], "confidence": 95}},
+    {"id": "SES-016", "protocol": "IMAP", "src": "10.10.4.15", "dst": "imap.example.org", "src_port": 61244, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 54, "bytes": 183200, "duration_s": 349, "anomaly": {"score": 8, "detected": [], "confidence": 96}},
+    {"id": "SES-017", "protocol": "IMAP", "src": "10.10.4.18", "dst": "imap.example.org", "src_port": 61301, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 49, "bytes": 158700, "duration_s": 318, "anomaly": {"score": 7, "detected": [], "confidence": 96}},
+    {"id": "SES-018", "protocol": "POP3", "src": "10.10.6.9", "dst": "pop.example.org", "src_port": 62211, "dst_port": 995, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 23, "bytes": 67800, "duration_s": 52, "anomaly": {"score": 5, "detected": [], "confidence": 97}}
+  ],
+  "starttls_events": [
+    {"session": "SES-001", "advertised": true, "negotiated": true},
+    {"session": "SES-002", "advertised": true, "negotiated": true},
+    {"session": "SES-003", "advertised": true, "negotiated": false, "note": "ClientHello response did not include STARTTLS — stripping suspected"},
+    {"session": "SES-004", "advertised": true, "negotiated": false, "note": "STARTTLS keyword replaced by garbage bytes — stripping suspected"},
+    {"session": "SES-005", "advertised": true, "negotiated": false, "note": "Connection reset immediately after STARTTLS — stripping suspected"},
+    {"session": "SES-006", "advertised": true, "negotiated": true},
+    {"session": "SES-007", "advertised": true, "negotiated": true},
+    {"session": "SES-008", "advertised": true, "negotiated": true},
+    {"session": "SES-009", "advertised": true, "negotiated": true},
+    {"session": "SES-010", "advertised": true, "negotiated": true},
+    {"session": "SES-011", "advertised": true, "negotiated": true},
+    {"session": "SES-012", "advertised": true, "negotiated": false, "note": "Server silently ignored STARTTLS — plaintext continued"},
+    {"session": "SES-013", "advertised": true, "negotiated": true},
+    {"session": "SES-014", "advertised": true, "negotiated": true}
+  ],
+  "notes": "4 sessions stripped to plaintext, 7 downgraded to TLS 1.0 with 3DES, expired certificate served on 8 sessions. SES-014 is the highest-priority session."
+}

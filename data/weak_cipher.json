@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "name": "Weak Cipher Suite",
+    "file_label": "weak_cipher.pcap",
+    "size_hint": "2.4 MB",
+    "capture_window": "2026-09-22 08:30 – 09:00 IST",
+    "description": "Servers negotiate weak cipher suites: 3DES (Sweet32), RC4, and legacy CBC-SHA1 with static RSA key exchange."
+  },
+  "protocols": [
+    {"name": "SMTP", "sessions": 10, "confidence": 97},
+    {"name": "IMAP", "sessions": 5, "confidence": 95},
+    {"name": "POP3", "sessions": 2, "confidence": 90}
+  ],
+  "certificates": [
+    {"id": "CERT-1", "subject": "mail.example.org", "issuer": "Example CA G2", "valid_from": "2026-01-12", "valid_until": "2027-01-12", "key_alg": "RSA", "key_len": 2048, "sig_alg": "SHA256withRSA", "status": "VALID", "san": "mail.example.org, smtp.example.org"},
+    {"id": "CERT-2", "subject": "imap.example.org", "issuer": "Example CA G2", "valid_from": "2026-02-03", "valid_until": "2027-02-03", "key_alg": "RSA", "key_len": 1024, "sig_alg": "SHA1withRSA", "status": "VALID", "san": "imap.example.org", "note": "Legacy 1024-bit key with SHA1 signature"}
+  ],
+  "sessions": [
+    {"id": "SES-001", "protocol": "SMTP", "src": "10.10.2.14", "dst": "mail.example.local", "src_port": 52110, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 36, "bytes": 138400, "duration_s": 24, "anomaly": {"score": 12, "detected": [], "confidence": 94}},
+    {"id": "SES-002", "protocol": "SMTP", "src": "10.10.2.21", "dst": "mail.example.local", "src_port": 53102, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 32, "bytes": 112900, "duration_s": 21, "anomaly": {"score": 71, "detected": ["3DES cipher negotiated (Sweet32 risk)", "No forward secrecy (static RSA key exchange)"], "confidence": 95}},
+    {"id": "SES-003", "protocol": "SMTP", "src": "10.10.2.25", "dst": "mail.partner.net", "src_port": 54233, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "RC4-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 30, "bytes": 104300, "duration_s": 19, "anomaly": {"score": 88, "detected": ["RC4 cipher negotiated (prohibited, RFC 7465)", "No forward secrecy (static RSA key exchange)"], "confidence": 97}},
+    {"id": "SES-004", "protocol": "SMTP", "src": "10.10.2.31", "dst": "mail.partner.net", "src_port": 55190, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "AES128-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 33, "bytes": 118200, "duration_s": 22, "anomaly": {"score": 52, "detected": ["Legacy CBC-SHA1 cipher suite", "No forward secrecy (static RSA key exchange)"], "confidence": 93}},
+    {"id": "SES-005", "protocol": "SMTP", "src": "10.10.2.40", "dst": "mx.vendorsys.com", "src_port": 56311, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 29, "bytes": 96100, "duration_s": 17, "anomaly": {"score": 70, "detected": ["3DES cipher negotiated (Sweet32 risk)", "No forward secrecy (static RSA key exchange)"], "confidence": 95}},
+    {"id": "SES-006", "protocol": "SMTP", "src": "10.10.2.47", "dst": "mail.example.local", "src_port": 57410, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 34, "bytes": 116700, "duration_s": 20, "anomaly": {"score": 10, "detected": [], "confidence": 95}},
+    {"id": "SES-007", "protocol": "SMTP", "src": "10.10.2.52", "dst": "mail.example.local", "src_port": 58122, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "AES256-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 31, "bytes": 109800, "duration_s": 18, "anomaly": {"score": 51, "detected": ["Legacy CBC-SHA1 cipher suite", "No forward secrecy (static RSA key exchange)"], "confidence": 93}},
+    {"id": "SES-008", "protocol": "SMTP", "src": "10.10.2.58", "dst": "mx.vendorsys.com", "src_port": 59144, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "RC4-MD5", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 27, "bytes": 88400, "duration_s": 15, "anomaly": {"score": 92, "detected": ["RC4 cipher negotiated (prohibited, RFC 7465)", "MD5 MAC in cipher suite", "No forward secrecy (static RSA key exchange)"], "confidence": 98}},
+    {"id": "SES-009", "protocol": "SMTP", "src": "10.10.2.62", "dst": "mail.example.local", "src_port": 59210, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 35, "bytes": 121300, "duration_s": 21, "anomaly": {"score": 9, "detected": [], "confidence": 96}},
+    {"id": "SES-010", "protocol": "SMTP", "src": "10.10.2.66", "dst": "mail.partner.net", "src_port": 59322, "dst_port": 25, "tls": "STARTTLS", "tls_version": "TLS 1.2", "cipher": "3DES-EDE-CBC", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 28, "bytes": 90500, "duration_s": 16, "anomaly": {"score": 69, "detected": ["3DES cipher negotiated (Sweet32 risk)", "No forward secrecy (static RSA key exchange)"], "confidence": 94}},
+    {"id": "SES-011", "protocol": "IMAP", "src": "10.10.4.11", "dst": "imap.example.org", "src_port": 61200, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 60, "bytes": 218900, "duration_s": 388, "anomaly": {"score": 46, "detected": ["Certificate uses 1024-bit RSA key (below 2048 minimum)"], "confidence": 96}},
+    {"id": "SES-012", "protocol": "IMAP", "src": "10.10.4.15", "dst": "imap.example.org", "src_port": 61244, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 55, "bytes": 187600, "duration_s": 356, "anomaly": {"score": 45, "detected": ["Certificate uses 1024-bit RSA key (below 2048 minimum)"], "confidence": 96}},
+    {"id": "SES-013", "protocol": "IMAP", "src": "10.10.4.18", "dst": "imap.example.org", "src_port": 61301, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 52, "bytes": 172300, "duration_s": 330, "anomaly": {"score": 47, "detected": ["Certificate uses SHA1 signature", "Certificate uses 1024-bit RSA key (below 2048 minimum)"], "confidence": 97}},
+    {"id": "SES-014", "protocol": "IMAP", "src": "10.10.4.22", "dst": "imap.example.org", "src_port": 61355, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES128-GCM-SHA256", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 49, "bytes": 158100, "duration_s": 305, "anomaly": {"score": 44, "detected": ["Certificate uses 1024-bit RSA key (below 2048 minimum)"], "confidence": 95}},
+    {"id": "SES-015", "protocol": "IMAP", "src": "10.10.4.25", "dst": "imap.example.org", "src_port": 61402, "dst_port": 993, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-2", "packets": 46, "bytes": 146900, "duration_s": 288, "anomaly": {"score": 45, "detected": ["Certificate uses 1024-bit RSA key (below 2048 minimum)"], "confidence": 96}},
+    {"id": "SES-016", "protocol": "POP3", "src": "10.10.6.9", "dst": "pop.example.org", "src_port": 62211, "dst_port": 995, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "AES256-SHA", "key_exchange": "RSA", "forward_secrecy": false, "cert": "CERT-1", "packets": 23, "bytes": 66200, "duration_s": 54, "anomaly": {"score": 50, "detected": ["Legacy CBC-SHA1 cipher suite", "No forward secrecy (static RSA key exchange)"], "confidence": 92}},
+    {"id": "SES-017", "protocol": "POP3", "src": "10.10.6.12", "dst": "pop.example.org", "src_port": 62290, "dst_port": 995, "tls": "IMPLICIT TLS", "tls_version": "TLS 1.2", "cipher": "ECDHE-RSA-AES256-GCM-SHA384", "key_exchange": "ECDHE", "forward_secrecy": true, "cert": "CERT-1", "packets": 25, "bytes": 72100, "duration_s": 59, "anomaly": {"score": 8, "detected": [], "confidence": 96}}
+  ],
+  "starttls_events": [
+    {"session": "SES-001", "advertised": true, "negotiated": true},
+    {"session": "SES-002", "advertised": true, "negotiated": true},
+    {"session": "SES-003", "advertised": true, "negotiated": true},
+    {"session": "SES-004", "advertised": true, "negotiated": true},
+    {"session": "SES-005", "advertised": true, "negotiated": true},
+    {"session": "SES-006", "advertised": true, "negotiated": true},
+    {"session": "SES-007", "advertised": true, "negotiated": true},
+    {"session": "SES-008", "advertised": true, "negotiated": true},
+    {"session": "SES-009", "advertised": true, "negotiated": true},
+    {"session": "SES-010", "advertised": true, "negotiated": true}
+  ],
+  "notes": "Protocol versions healthy; weaknesses are cipher-level (3DES/RC4/CBC-SHA1) plus a legacy 1024-bit SHA1 certificate on IMAP."
+}
